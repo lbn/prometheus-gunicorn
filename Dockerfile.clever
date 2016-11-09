@@ -1,0 +1,11 @@
+FROM python:3.5-alpine
+
+MAINTAINER Lee Archer
+
+RUN mkdir /app
+WORKDIR /app
+ADD prometheus_multi.py clever_app.py requirements.txt /app/
+RUN pip install -r /app/requirements.txt
+
+EXPOSE 9010-9020
+ENTRYPOINT gunicorn clever_app:app --bind 0.0.0.0:9010 --workers 4
