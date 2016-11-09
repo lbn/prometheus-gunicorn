@@ -1,0 +1,11 @@
+FROM python:3.5-alpine
+
+MAINTAINER Lee Archer
+
+RUN mkdir /app
+WORKDIR /app
+ADD naive_app.py requirements.txt /app/
+RUN pip install -r /app/requirements.txt
+
+EXPOSE 9010-9020
+ENTRYPOINT gunicorn naive_app:app --bind 0.0.0.0:9010
