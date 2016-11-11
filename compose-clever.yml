@@ -1,0 +1,24 @@
+version: "2"
+services:
+  consul:
+    image: consul:0.7.0
+    container_name: consul
+    ports:
+      - "8400:8400"
+      - "8500:8500"
+      - "8600:53"
+    command: "agent -server -dev -client 0.0.0.0 -ui-dir /ui"
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+
+  clever_app:
+    build:
+      context: .
+      dockerfile: Dockerfile.clever
+    command: --workers=4

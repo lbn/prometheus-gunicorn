@@ -3,10 +3,17 @@ from http.server import HTTPServer
 import socket
 import logging as log
 import atexit
+# get_ip_address
+from sh import ip, awk, cut
 
 import prometheus_client
-
 import consul
+
+
+# Do not use addr and remove the address option from the register function
+# if you are running this on a regular instance with a local Consul agent
+addr = cut(awk(ip("addr", "show", "dev", "eth0"), "/inet / { print $2 }"), "-d/", "-f1").strip()
+print(addr)
 
 # consul should be a hostname that is accessible from the clever app container
 c = consul.Consul(host="consul")
@@ -25,7 +32,7 @@ def start_prometheus_server(name, port_range):
             # alias for OSError
             continue  # Try next port
         service_id = "{}-{}".format(name, port)
-        c.agent.service.register(name, service_id=service_id, port=port, tags=["prometheus"])
+        c.agent.service.register(name, service_id=service_id, address=addr, port=port, tags=["prometheus"])
         atexit.register(deregister_id(service_id))
 
         thread = PrometheusEndpointServer(httpd)
@@ -43,4 +50,3 @@ class PrometheusEndpointServer(threading.Thread):
 
     def run(self):
         self.httpd.serve_forever()
-

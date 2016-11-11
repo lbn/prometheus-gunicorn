@@ -1,0 +1,13 @@
+version: "2"
+services:
+  naive_app:
+    build:
+      context: .
+      dockerfile: Dockerfile.naive
+    command: --workers=1
+  naive_app_w4:
+    build:
+      context: .
+      dockerfile: Dockerfile.naive
+    container_name: naive_app_w4
+    command: --workers=4
