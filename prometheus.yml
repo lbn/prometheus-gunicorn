@@ -14,7 +14,8 @@ scrape_configs:
         separator:      ':'
         target_label:  '__address__'
         replacement:   '$1'
-      - source_labels: ['__meta_consul_node']
+      - source_labels: ['__meta_consul_service_address', '__meta_consul_service_port']
         regex:         '(.*)'
+        separator:      ':'
         target_label:  'instance'
         replacement:   '$1'
